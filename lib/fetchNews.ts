@@ -10,12 +10,14 @@ export const fetchCurrents = async () => {
           category: "technology", // optional
         },
       });
-  
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const articles = res.data.news.map((article: any) => ({
         title: article.title,
         description: article.description,
         url: article.url,
         imageUrl: article.image || "/placeholder.png",
+        publishedAt: article.published,
       }));
   
       return articles;
@@ -35,12 +37,14 @@ export const fetchCurrents = async () => {
           limit: 10,
         },
       });
-  
+      
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const articles = res.data.data.map((article: any) => ({
         title: article.title,
         description: article.description,
         url: article.url,
         imageUrl: article.image || "/placeholder.png",
+        publishedAt: article.published_at,
       }));
   
       return articles;
@@ -66,12 +70,16 @@ export const fetchCurrents = async () => {
         },
       });
   
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return res.data.articles.map((a: any) => ({
         title: a.title,
         description: a.description,
         url: a.url,
         imageUrl: a.urlToImage || "/placeholder.png",
+     
       }));
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("NewsAPI error:", error.message);
       return [];
