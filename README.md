@@ -1,40 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# News Portal - Next.js Application
 
-## Getting Started
+Proyek ini merupakan aplikasi portal berita berbasis Next.js yang mendukung autentikasi menggunakan akun Google melalui NextAuth.js.
+Link Hosting Vercel : https://news-portal-smoky.vercel.app/ 
 
-First, run the development server:
+## 📦 Clone Repository
+
+Langkah pertama adalah mengunduh project dari GitHub:
+
+```bash
+git clone https://github.com/Dzaki-G/news-portal.git
+cd news-portal
+```
+
+Perintah di atas akan menyalin semua file project ke dalam folder lokal dengan nama `news-portal`.
+
+## 📁 Install Dependencies
+
+Setelah repository berhasil di-clone, instal semua dependensi yang dibutuhkan:
+
+```bash
+npm install
+```
+
+Perintah ini akan membaca file `package.json` dan menginstal semua library yang dibutuhkan oleh aplikasi seperti Next.js, Tailwind CSS, dan NextAuth.js.
+
+## Konfigurasi Environment
+
+Buat file baru bernama `.env.local` di root direktori dan isi dengan konfigurasi berikut:
+
+```env
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXTAUTH_SECRET=your_random_secret
+NEXTAUTH_URL=http://localhost:3000
+```
+
+- **GOOGLE_CLIENT_ID** & **GOOGLE_CLIENT_SECRET**: Dapatkan dari [Google Developer Console](https://console.developers.google.com/) setelah membuat aplikasi OAuth2.
+- **NEXTAUTH_SECRET**: Gunakan string acak (bisa dibuat menggunakan `openssl rand -base64 32`).
+- **NEXTAUTH_URL**: Alamat URL aplikasi saat development.
+  
+
+## Menjalankan Server Development
+
+Untuk menjalankan aplikasi dalam mode development:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Aplikasi akan berjalan di `http://localhost:3000`.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Mengakses Web Aplikasi
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Buka browser dan akses halaman login:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Pengguna dapat login menggunakan akun Google sesuai konfigurasi OAuth yang telah dibuat.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
