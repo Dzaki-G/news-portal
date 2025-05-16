@@ -21,6 +21,7 @@ export const fetchCurrents = async () => {
       }));
   
       return articles;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Failed to fetch from Currents API:", error.response?.data || error.message);
       return [];
@@ -48,6 +49,7 @@ export const fetchCurrents = async () => {
       }));
   
       return articles;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error.response?.status === 429) {
         console.warn("⚠️ Mediastack rate limit reached (429). Returning empty fallback.");
