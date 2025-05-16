@@ -6,9 +6,12 @@ import {
 } from "@/lib/fetchNews";
 import { GetServerSideProps } from "next";
 import styles from './news.module.css';
-import { useState, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useState, useEffect } from "react";
+import { reportPerformanceMetrics } from "../lib/metrics";
+
+
 
 type Article = {
   title: string;
@@ -18,6 +21,8 @@ type Article = {
   publishedAt?: string;
   source?: string;
 };
+
+
 
 export default function NewsPage({
   currents,
@@ -37,6 +42,7 @@ export default function NewsPage({
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
+    reportPerformanceMetrics();
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem("theme");
       if (savedTheme === "dark") {
@@ -94,7 +100,38 @@ export default function NewsPage({
     <>
       <Head>
         <title>Dzaki Ge NEWS</title>
-        <meta name="description" content="Get the latest tech news from multiple sources" />
+        <meta name="description" content="Berita terupdate dari berbagai sumber terpercaya." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta property="og:title" content="Berita Terbaru" />
+        <meta property="og:description" content="Berita terupdate dari berbagai sumber terpercaya." />
+        <meta property="og:type" content="article" />
+        <meta property="og:image" content="/images/berita.jpg" />
+        <link rel="canonical" href="https://news-portal.vercel.app/news" />
+
+        <script type="application/ld+json" dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            "headline": "Judul Berita Terbaru",
+            "image": ["https://news-portal.vercel.app/images/berita.jpg"],
+            "datePublished": "2025-05-16T09:00:00+07:00",
+            "dateModified": "2025-05-16T10:00:00+07:00",
+            "author": {
+              "@type": "Person",
+              "name": "Admin Portal"
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "News Portal",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://news-portal.vercel.app/logo.png"
+              }
+            },
+            "description": "Artikel berita terbaru dan terverifikasi dari News Portal"
+          })
+          }
+        } />
       </Head>
 
       <div className={`${styles.container} ${isDarkMode ? styles.darkMode : ""}`}>
