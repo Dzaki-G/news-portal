@@ -1,4 +1,4 @@
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 import {
   fetchCurrents,
   fetchMediastack,
@@ -8,7 +8,8 @@ import { GetServerSideProps } from "next";
 import styles from './news.module.css';
 import { useState, useEffect } from "react";
 import Head from "next/head";
-
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 type Article = {
   title: string;
@@ -28,6 +29,7 @@ export default function NewsPage({
   mediastack: Article[];
   newsapi: Article[];
 }) {
+  const router = useRouter();
   const [activeSource, setActiveSource] = useState<string>("all");
   const [cIndex, setCIndex] = useState(0);
   const [mIndex, setMIndex] = useState(0);
@@ -36,7 +38,6 @@ export default function NewsPage({
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Check for saved theme preference
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem("theme");
       if (savedTheme === "dark") {
@@ -48,12 +49,13 @@ export default function NewsPage({
   const toggleTheme = () => {
     setIsDarkMode(!isDarkMode);
     if (typeof window !== 'undefined') {
-      if (!isDarkMode) {
-        localStorage.setItem("theme", "dark");
-      } else {
-        localStorage.setItem("theme", "light");
-      }
+      localStorage.setItem("theme", !isDarkMode ? "dark" : "light");
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut({ callbackUrl: '/' });
+    router.push('/');
   };
 
   const sources = [
@@ -80,15 +82,14 @@ export default function NewsPage({
   });
 
   // Format date for display
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return "";
+  function formatDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+    return date.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
-  };
+  }
 
   return (
     <>
@@ -101,9 +102,17 @@ export default function NewsPage({
         <header className={styles.header}>
           <div className={styles.headerContent}>
             <h1 className={styles.logo}>Dzaki <span>Ge NEWS</span></h1>
-            <div className={styles.themeToggle}>
-              <button onClick={toggleTheme} className={styles.themeButton}>
-                {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+            <div className={styles.buttonsContainer}>
+              <div className={styles.themeToggle}>
+                <button onClick={toggleTheme} className={styles.themeButton}>
+                  {isDarkMode ? "☀️ Light Mode" : "🌙 Dark Mode"}
+                </button>
+              </div>
+              <button 
+                onClick={handleSignOut}
+                className={styles.signOutButton}
+              >
+                Sign Out
               </button>
             </div>
           </div>
@@ -138,42 +147,45 @@ export default function NewsPage({
         <main>
           {activeSource === "all" ? (
             <div className={styles.allArticlesGrid}>
-              {filterArticles(allArticles).map((article, index) => (
-                <div key={index} className={styles.articleCard}>
-                  <div className={styles.cardImageContainer}>
-                    {article.imageUrl ? (
-                      <div className={styles.cardImage} style={{
+            {filterArticles(allArticles).map((article, index) => (
+              <div key={index} className={styles.articleCard}>
+                <div className={styles.cardImageContainer}>
+                  {article.imageUrl ? (
+                    <div
+                      className={styles.cardImage}
+                      style={{
                         backgroundImage: `url(${article.imageUrl})`,
                         backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}></div>
-                    ) : (
-                      <div className={styles.placeholderImage}>News</div>
-                    )}
-                    {article.source && (
-                      <span className={styles.sourceTag}>{article.source}</span>
-                    )}
-                  </div>
-                  <div className={styles.cardContent}>
-                    <h3 className={styles.cardTitle}>{article.title}</h3>
-                    {article.publishedAt && (
-                      <p className={styles.publishDate}>{formatDate(article.publishedAt)}</p>
-                    )}
-                    <p className={styles.cardDescription}>
-                      {article.description || "No description available"}
-                    </p>
-                    <a
-                      href={article.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.readMoreLink}
-                    >
-                      Read full article
-                    </a>
-                  </div>
+                        backgroundPosition: 'center',
+                      }}
+                    ></div>
+                  ) : (
+                    <div className={styles.placeholderImage}>News</div>
+                  )}
+                  {article.source && (
+                    <span className={styles.sourceTag}>{article.source}</span>
+                  )}
                 </div>
-              ))}
-            </div>
+                <div className={styles.cardContent}>
+                  <h3 className={styles.cardTitle}>{article.title}</h3>
+                  {article.publishedAt && (
+                    <p className={styles.publishDate}>{formatDate(article.publishedAt)}</p>
+                  )}
+                  <p className={styles.cardDescription}>
+                    {article.description || "No description available"}
+                  </p>
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.readMoreLink}
+                  >
+                    Read full article
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
           ) : (
             <div className={styles.featuredColumns}>
               {sources
@@ -205,6 +217,7 @@ export default function NewsPage({
                           {article.description || "No description available"}
                         </p>
                         <div className={styles.articleActions}>
+                        <div className={styles.articleLinkContainer}>
                           <a
                             href={article.url}
                             target="_blank"
@@ -213,6 +226,7 @@ export default function NewsPage({
                           >
                             Read full article
                           </a>
+                        </div>
                           <button
                             onClick={() => setIndex((prev) => (prev + 1) % filteredData.length)}
                             className={styles.nextButton}
